@@ -1,0 +1,66 @@
+version: '3'
+
+services:
+# database 
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - DB_ANON_ROLE=${DB_ANON_ROLE}
+      - BACKEND_DB_SCHEMA=${BACKEND_DB_SCHEMA}
+    volumes:
+      - postgres_backend_data:/var/lib/postgresql/data
+      - ./db/:/docker-entrypoint-initdb.d/
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9999:8080
+    networks:
+      - backend
+
+# postgrest
+  postgrest:
+    image: postgrest/postgrest
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      PGRST_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      PGRST_DB_PRE_CONFIG: postgrest.pre_config
+    healthcheck:
+      test: ["CMD", "curl", "-f", "localhost:3001/live"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 2m
+    networks:
+      - backend
+
+  swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    environment:
+      API_URL: http://localhost:3000/
+    networks:
+      - backend
+
+volumes:
+  postgres_backend_data:
+  
+networks:
+  backend:
+    name: backend
+    driver: bridge
