@@ -15,4 +15,5 @@ Lightweight rapid development scaffolding. happy solo dev.
 1. using astro fetch() to get data
 
 # improve
-If access control and authentication are required, you can use api gateway to protect the backend api. feel free to ask.
+- access control
+- multiple tenancy
