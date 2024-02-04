@@ -17,3 +17,13 @@ Lightweight rapid development scaffolding. happy solo dev.
 # improve
 - access control
 - multiple tenancy
+
+# ref
+you can start your frontend by:
+```
+bun create astro --template asoluka/astro-commerce
+```
+some template:
+- landing page: https://github.com/onwidget/astrowind
+- admin: https://github.com/themesberg/flowbite-astro-admin-dashboard
+- product: https://github.com/asoluka/astro-commerce
